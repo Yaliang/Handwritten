@@ -84,14 +84,22 @@ function listbox1_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listbox1
-global s
+global s nn
 contents = cellstr(get(hObject,'String'));
 value = contents{get(hObject,'Value')};
 value = strsplit(value,'_');
 select = num2str(str2num(value{2}));
 axes(handles.axes1);
 imshow(s.(strcat('image_',select)));
-set(handles.text1,'String',num2str(s.(strcat('label_',select))));
+input = double(s.(strcat('image_',select)))';
+input = input(:);
+nn.hl_z = nn.hl_w*input + nn.hl_b;
+nn.hl_a = 1./(1+exp(-nn.hl_z));
+nn.ol_z = nn.ol_w*nn.hl_a + nn.ol_b;
+nn.ol_a = 1./(1+exp(-nn.ol_z));
+[~,result] = max(nn.ol_a,[],1);
+result = result-1;
+set(handles.text1,'String',strcat('Truth:',num2str(s.(strcat('label_',select))),'; NN Result:',num2str(result)));
 
 
 % --- Executes during object creation, after setting all properties.
@@ -108,10 +116,12 @@ end
 
 
 function read_data(handles) 
-global s
+global s nn
+load nn_now.mat;
+
 % read images
 rb = fileread('train-images.idx3-ubyte');
-imageNum = 100;
+imageNum = 10000;
 for i=1:imageNum
     img = uint8(rb((16+28*28*(i-1)+1):(16+28*28*(i))));
     img = vec2mat(img,28);
