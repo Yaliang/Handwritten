@@ -22,7 +22,7 @@ function varargout = demo(varargin)
 
 % Edit the above text to modify the response to help demo
 
-% Last Modified by GUIDE v2.5 06-Mar-2015 16:05:53
+% Last Modified by GUIDE v2.5 09-Mar-2015 00:35:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,23 +84,7 @@ function listbox1_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listbox1
-global s nn
-contents = cellstr(get(hObject,'String'));
-value = contents{get(hObject,'Value')};
-value = strsplit(value,'_');
-select = num2str(str2num(value{2}));
-axes(handles.axes1);
-imshow(s.(strcat('image_',select)));
-input = double(s.(strcat('image_',select)))';
-input = input(:);
-nn.hl_z = nn.hl_w*input + nn.hl_b;
-nn.hl_a = 1./(1+exp(-nn.hl_z));
-nn.ol_z = nn.ol_w*nn.hl_a + nn.ol_b;
-nn.ol_a = 1./(1+exp(-nn.ol_z));
-[~,result] = max(nn.ol_a,[],1);
-result = result-1;
-set(handles.text1,'String',strcat('Truth:',num2str(s.(strcat('label_',select))),'; NN Result:',num2str(result)));
-
+getNNresult(handles);
 
 % --- Executes during object creation, after setting all properties.
 function listbox1_CreateFcn(hObject, eventdata, handles)
@@ -116,11 +100,12 @@ end
 
 
 function read_data(handles) 
-global s nn
-load nn_now.mat;
+global s nn imageNum
+load nn_58911.mat;
+nn = nn_best;
 
 % read images
-rb = fileread('train-images.idx3-ubyte');
+rb = fileread('t10k-images.idx3-ubyte');
 imageNum = 10000;
 for i=1:imageNum
     img = uint8(rb((16+28*28*(i-1)+1):(16+28*28*(i))));
@@ -128,7 +113,7 @@ for i=1:imageNum
     s.(strcat('image_',num2str(i))) = img;
 end
 % read labels
-rb = fileread('train-labels.idx1-ubyte');
+rb = fileread('t10k-labels.idx1-ubyte');
 for i=1:imageNum
     label = uint8(rb(8+i));
     s.(strcat('label_',num2str(i))) = label;
@@ -138,3 +123,71 @@ for i=1:imageNum
     list = [list {strcat('Sample_', num2str(i))}];
 end
 set(handles.listbox1,'String',list);
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global imageNum
+if (get(handles.listbox1,'Value')==imageNum)
+    next = 1;
+else
+    next = get(handles.listbox1,'Value')+1;
+end
+set(handles.listbox1,'Value',next);
+while getNNresult(handles)
+    if (get(handles.listbox1,'Value')==imageNum)
+        next = 1;
+    else
+        next = get(handles.listbox1,'Value')+1;
+    end
+    set(handles.listbox1,'Value',next);
+end
+
+
+function correct = getNNresult(handles)
+global s nn
+contents = cellstr(get(handles.listbox1,'String'));
+value = contents{get(handles.listbox1,'Value')};
+value = strsplit(value,'_');
+select = num2str(str2num(value{2}));
+axes(handles.axes1);
+imshow(s.(strcat('image_',select)));
+input = double(s.(strcat('image_',select)))';
+input = input(:);
+nn.hl_z = nn.hl_w*input + nn.hl_b;
+nn.hl_a = 1./(1+exp(-nn.hl_z));
+nn.ol_z = nn.ol_w*nn.hl_a + nn.ol_b;
+nn.ol_a = 1./(1+exp(-nn.ol_z));
+[~,result] = max(nn.ol_a,[],1);
+result = result-1;
+set(handles.text1,'String',strcat('Truth:',num2str(s.(strcat('label_',select))),'; NN Result:',num2str(result)));
+if (result == s.(strcat('label_',select)))
+    correct = true;
+else
+    correct = false;
+end
+
+
+% --- Executes on button press in pushbutton2.
+function pushbutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global imageNum
+if (get(handles.listbox1,'Value')==1)
+    prev = imageNum;
+else
+    prev = get(handles.listbox1,'Value')-1;
+end
+set(handles.listbox1,'Value',prev);
+while getNNresult(handles)
+    if (get(handles.listbox1,'Value')==1)
+        prev = imageNum;
+    else
+        prev = get(handles.listbox1,'Value')-1;
+    end
+    set(handles.listbox1,'Value',prev);
+end
