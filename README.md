@@ -15,6 +15,8 @@ Layout of the GUI
 
 ## Dataset
 
+Dataset for this project can be downloaded at http://yann.lecun.com/exdb/mnist/
+
 ### Training Set
 * train-images-idx3-ubyte
 * train-labels-idx1-ubyte
