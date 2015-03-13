@@ -5,18 +5,18 @@ Handwritten Recognition
 Train the neural network by using regular backpropergation algorithem
 
 ## nn_bp_test.m
-Test the neural network
+Test the neural network and displat the total number of correctly recognized digits. 
 
 ## demo.m
 Scripts for GUI
 
 ## Database
 
-### Train Set
+### Training Set
 * train-images-idx3-ubyte.gz
 * train-labels-idx1-ubyte.gz
 
-### Test Set
+### Testing Set
 * t10k-images-idx3-ubyte.gz
 * t10k-labels-idx1-ubyte.gz
 
