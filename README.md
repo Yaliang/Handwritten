@@ -8,7 +8,10 @@ Train the 2 layers neural network with 1000 hidden neurons by using backproperga
 Test the neural network and displat the total number of correctly recognized digits. 
 
 ## demo.m
-Scripts for GUI.
+Scripts of the GUI.
+
+## demo.fig
+Layout of the GUI
 
 ## Database
 
