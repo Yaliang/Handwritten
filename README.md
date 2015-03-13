@@ -5,7 +5,7 @@ Handwritten Recognition
 Train the 2 layers neural network with 1000 hidden neurons by using backpropergation algorithem.
 
 ## nn_bp_test.m
-Test the neural network and displat the total number of correctly recognized digits. 
+Test the neural network and print the total number of correctly recognized digits. 
 
 ## demo.m
 Scripts of the GUI.
