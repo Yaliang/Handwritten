@@ -13,7 +13,7 @@ Scripts of the GUI.
 ## demo.fig
 Layout of the GUI
 
-## Database
+## Dataset
 
 ### Training Set
 * train-images-idx3-ubyte
