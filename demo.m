@@ -61,6 +61,7 @@ guidata(hObject, handles);
 % UIWAIT makes demo wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 read_data(handles);
+getNNresult(handles);
 axes(handles.axes1);
 axis off;
 
@@ -105,7 +106,7 @@ load nn_58911.mat;
 nn = nn_best;
 
 % read images
-rb = fileread('t10k-images.idx3-ubyte');
+rb = fileread('t10k-images-idx3-ubyte');
 imageNum = 10000;
 for i=1:imageNum
     img = uint8(rb((16+28*28*(i-1)+1):(16+28*28*(i))));
@@ -113,7 +114,7 @@ for i=1:imageNum
     s.(strcat('image_',num2str(i))) = img;
 end
 % read labels
-rb = fileread('t10k-labels.idx1-ubyte');
+rb = fileread('t10k-labels-idx1-ubyte');
 for i=1:imageNum
     label = uint8(rb(8+i));
     s.(strcat('label_',num2str(i))) = label;
